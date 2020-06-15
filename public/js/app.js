@@ -1958,22 +1958,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["modelname"],
   data: function data() {
     return {
       dane: [],
-      hidden: ["created_at", "updated_at", 'category_id'],
+      hidden: ["created_at", "updated_at", "category_id"],
       mode: "create",
       editid: null,
       cruddata: {}
@@ -1989,7 +1980,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
     mydestroy: function mydestroy(id) {
       var self = this;
-      axios["delete"]('/' + self.modelname.toLowerCase() + '/' + id).then(function (res) {
+      axios["delete"]("/" + self.modelname.toLowerCase() + "/" + id).then(function (res) {
         return self.getData();
       });
     },
@@ -2002,9 +1993,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       }));
       this.cruddata = freshobject;
     },
+    done: function done(id) {
+      var self = this;
+      setTimeout(function () {
+        var one = self.dane.find(function (el) {
+          return el.id == id;
+        });
+        console.log(one); //this.cruddata.status = one.status;
+
+        console.log(one.status);
+        axios.patch("/" + self.modelname.toLowerCase() + "/" + id, {
+          status: one.status
+        });
+      }, 1000); // this.cruddata 
+    },
     update: function update() {
       var self = this;
-      axios.patch('/' + self.modelname.toLowerCase() + '/' + self.editid, this.cruddata).then(function (res) {
+      axios.patch("/" + self.modelname.toLowerCase() + "/" + self.editid, this.cruddata).then(function (res) {
         return self.getData();
       });
     },
@@ -2023,7 +2028,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     this.getData();
     _event_bus_js__WEBPACK_IMPORTED_MODULE_0__["EventBus"].$on("reload", function (payload) {
-      console.log('działa');
+      console.log("działa");
 
       _this.getData();
     });
@@ -37417,73 +37422,58 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _vm.modelname.length > 0
-      ? _c("div", [
-          _c("p", [_c("b", [_vm._v(_vm._s(_vm.modelname))])]),
-          _vm._v(" "),
-          _c("table", { staticClass: "table table-bordered table-dark" }, [
-            _c("thead", [
-              _c(
-                "tr",
-                [
-                  _vm._l(_vm.heads, function(elem) {
-                    return _c("td", [_vm._v(_vm._s(elem))])
-                  }),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("usuń")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("edytuj")])
+      ? _c(
+          "div",
+          _vm._l(_vm.dane, function(elem) {
+            return _c("div", [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: elem.status,
+                    expression: "elem.status"
+                  }
                 ],
-                2
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.dane, function(elem) {
-                return _c(
-                  "tr",
-                  [
-                    _vm._l(_vm.heads, function(head) {
-                      return _c("td", [_vm._v(_vm._s(elem[head]))])
-                    }),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-danger",
-                          on: {
-                            click: function($event) {
-                              return _vm.mydestroy(elem.id)
-                            }
-                          }
-                        },
-                        [_vm._v("Usuń")]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-danger",
-                          on: {
-                            click: function($event) {
-                              return _vm.edit(elem.id)
-                            }
-                          }
-                        },
-                        [_vm._v("Edytuj")]
-                      )
-                    ])
-                  ],
-                  2
-                )
+                attrs: { type: "checkbox" },
+                domProps: {
+                  checked: Array.isArray(elem.status)
+                    ? _vm._i(elem.status, null) > -1
+                    : elem.status
+                },
+                on: {
+                  click: function($event) {
+                    return _vm.done(elem.id)
+                  },
+                  change: function($event) {
+                    var $$a = elem.status,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && _vm.$set(elem, "status", $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          _vm.$set(
+                            elem,
+                            "status",
+                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                          )
+                      }
+                    } else {
+                      _vm.$set(elem, "status", $$c)
+                    }
+                  }
+                }
               }),
-              0
-            )
-          ])
-        ])
+              _vm._v(" "),
+              _c("label", { attrs: { for: "" } }, [_vm._v(_vm._s(elem.title))])
+            ])
+          }),
+          0
+        )
       : _c("div", [_vm._v("Zapodaj nazwę modelu by użyć komponentu Read")]),
     _vm._v(" "),
     _c("div", { attrs: { id: "edit" } }, [
@@ -37493,76 +37483,38 @@ var render = function() {
           : _c("p", [_c("b", [_vm._v("Stwórz nowy rekord")])]),
         _vm._v(" "),
         _c("div", [
-          _c("label", [_vm._v("title")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.cruddata.title,
-                expression: "cruddata.title"
-              }
-            ],
-            domProps: { value: _vm.cruddata.title },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", [_vm._v("Todo:")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.cruddata.title,
+                  expression: "cruddata.title"
                 }
-                _vm.$set(_vm.cruddata, "title", $event.target.value)
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", [_vm._v("description")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.cruddata.description,
-                expression: "cruddata.description"
-              }
-            ],
-            domProps: { value: _vm.cruddata.description },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+              ],
+              domProps: { value: _vm.cruddata.title },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.cruddata, "title", $event.target.value)
                 }
-                _vm.$set(_vm.cruddata, "description", $event.target.value)
               }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", [_vm._v("category_id")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.cruddata.category_id,
-                expression: "cruddata.category_id"
-              }
-            ],
-            domProps: { value: _vm.cruddata.category_id },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.cruddata, "category_id", $event.target.value)
-              }
-            }
-          }),
+            })
+          ]),
           _vm._v(" "),
           _vm.mode == "create"
             ? _c(
                 "button",
-                { attrs: { type: "button" }, on: { click: _vm.add } },
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.add }
+                },
                 [_vm._v("zapisz")]
               )
             : _vm._e(),
@@ -37570,7 +37522,11 @@ var render = function() {
           _vm.mode == "edit"
             ? _c(
                 "button",
-                { attrs: { type: "button" }, on: { click: _vm.update } },
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.update }
+                },
                 [_vm._v("Zmień")]
               )
             : _vm._e()

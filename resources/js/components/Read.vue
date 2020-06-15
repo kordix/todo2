@@ -1,56 +1,47 @@
 <template>
   <div>
     <div v-if="modelname.length > 0">
-      <p>
-        <b>{{modelname}}</b>
-      </p>
-      <table class="table table-bordered table-dark">
-        <thead>
-          <tr>
-            <td v-for="elem in heads">{{elem}}</td>
-            <td>usuń</td>
-            <td>edytuj</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="elem in dane">
-            <td v-for="head in heads">{{elem[head]}}</td>
-            <td><button @click="mydestroy(elem.id)" class="btn btn-sm btn-danger">Usuń</button></td>
-            <td><button @click="edit(elem.id)" class="btn btn-sm btn-danger">Edytuj</button></td>
-
-          </tr>
-        </tbody>
-      </table>
+   
+      <div v-for="elem in dane">
+          <input type="checkbox"  v-model="elem.status" @click="done(elem.id)"> 
+          <label for="">{{elem.title}}</label>
+      </div>    
     </div>
     <div v-else>Zapodaj nazwę modelu by użyć komponentu Read</div>
 
     <div id="edit">
-    <div>
-      <p v-if="mode=='edit'">
-        <b>Edytuj rekord</b>
-      </p>
-      <p v-else>
-        <b>Stwórz nowy rekord</b>
-      </p>
-
       <div>
-        <!-- <input type="hidden" class="form-control" :value="cruddata.id" name="id"> -->
+        <p v-if="mode=='edit'">
+          <b>Edytuj rekord</b>
+        </p>
+        <p v-else>
+          <b>Stwórz nowy rekord</b>
+        </p>
 
-        <!-- TU WSTAW HTML -->
-        <label>title</label>
-        <input v-model="cruddata.title">
-        <label>description</label>
-        <input v-model="cruddata.description" >
-        <label>category_id</label>
-        <input v-model="cruddata.category_id" >
+        <div>
+          <!-- <input type="hidden" class="form-control" :value="cruddata.id" name="id"> -->
 
-        <!-- koniec html -->
-        <button type="button" @click="add" v-if="mode=='create'">zapisz</button>
-        <button type="button" @click="update" v-if="mode=='edit'">Zmień</button>
+          <!-- TU WSTAW HTML -->
 
+          <div class="form-group">
+            <label>Todo:</label>
+            <input v-model="cruddata.title" >
+          </div>
+          <!-- <div class="form-group">
+            <label>description</label>
+            <input v-model="cruddata.description" >
+           </div>
+           <div>
+          <label>category_id</label>
+          <input v-model="cruddata.category_id" >
+          </div> -->
+
+          <!-- koniec html -->
+          <button type="button" class="btn btn-primary" @click="add" v-if="mode=='create'">zapisz</button>
+          <button type="button" class="btn btn-primary" @click="update" v-if="mode=='edit'">Zmień</button>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -62,7 +53,7 @@ export default {
   data() {
     return {
       dane: [],
-      hidden: ["created_at", "updated_at",'category_id'],
+      hidden: ["created_at", "updated_at", "category_id"],
       mode: "create",
       editid: null,
       cruddata: {}
@@ -72,23 +63,55 @@ export default {
     getData() {
       let self = this;
       //axios.get("/category").then(res => console.log(res));
-      axios.get("/" + self.modelname.toLowerCase()).then(res => (self.dane = res.data));
+      axios
+        .get("/" + self.modelname.toLowerCase())
+        .then(res => (self.dane = res.data));
     },
-    mydestroy(id){
-        let self = this;
-        axios.delete('/'+self.modelname.toLowerCase()+'/'+id).then(res => self.getData())
-        
+    mydestroy(id) {
+      let self = this;
+      axios
+        .delete("/" + self.modelname.toLowerCase() + "/" + id)
+        .then(res => self.getData());
     },
-    edit(id){
+    edit(id) {
       this.editid = id;
       this.mode = "edit";
       let freshobject = {};
-      freshobject = Object.create(this.dane.find((el)=>el.id == id))
-      this.cruddata = freshobject
+      freshobject = Object.create(this.dane.find(el => el.id == id));
+      this.cruddata = freshobject;
     },
-    update(){
+    done(id){
       let self = this;
-      axios.patch('/'+self.modelname.toLowerCase()+'/'+self.editid,this.cruddata).then((res)=>self.getData())
+      setTimeout(function(){
+          let one = self.dane.find((el) => el.id == id);
+      console.log(one);
+      
+      //this.cruddata.status = one.status;
+
+      console.log(one.status);
+      
+      axios.patch("/" + self.modelname.toLowerCase() + "/" + id, {status:one.status})
+
+
+      },1000)
+     
+    
+     
+
+
+  
+      // this.cruddata 
+      
+      
+    },
+    update() {
+      let self = this;
+      axios
+        .patch(
+          "/" + self.modelname.toLowerCase() + "/" + self.editid,
+          this.cruddata
+        )
+        .then(res => self.getData());
     },
     add() {
       let self = this;
@@ -103,7 +126,7 @@ export default {
   mounted() {
     this.getData();
     EventBus.$on("reload", payload => {
-        console.log('działa')
+      console.log("działa");
       this.getData();
     });
   },
