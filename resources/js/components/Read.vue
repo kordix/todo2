@@ -5,6 +5,7 @@
       <div v-for="elem in dane">
           <input type="checkbox"  v-model="elem.status" @click="done(elem.id)"> 
           <label for="">{{elem.title}}</label>
+          <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
       </div>    
     </div>
     <div v-else>Zapodaj nazwę modelu by użyć komponentu Read</div>
@@ -42,6 +43,7 @@
         </div>
       </div>
     </div>
+    <button id="kolko" @click="destroyMode=true"></button>
   </div>
 </template>
 
@@ -56,7 +58,8 @@ export default {
       hidden: ["created_at", "updated_at", "category_id"],
       mode: "create",
       editid: null,
-      cruddata: {}
+      cruddata: {},
+      destroyMode:false
     };
   },
   methods: {
@@ -145,3 +148,21 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+ #kolko {
+                border-radius:5px;
+                width:10px;
+                height:10px;
+                border:1px #999 solid;
+                position:absolute;
+                left:20px;
+                bottom:20px;
+            }
+
+            #kolko:hover{
+                background:red
+            }
+  
+</style>
