@@ -31,6 +31,16 @@ Vue.component('read', require('./components/Read.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+ window.allowDrop = function(ev){
+    ev.preventDefault();
+ }
+
+ window.drop = function(ev){
+     return ev.target.id
+ }
+
+
+
 const app = new Vue({
     el: '#app',
     data: {

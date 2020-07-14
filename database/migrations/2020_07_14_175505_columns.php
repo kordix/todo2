@@ -14,7 +14,7 @@ class Columns extends Migration
     public function up()
     {
         Schema::table('todos', function (Blueprint $table) {
-            $table->string('column')->nullable();    
+            $table->string('column')->default('1');    
         });
     }
 

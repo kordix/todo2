@@ -2049,6 +2049,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
     reset: function reset() {
       this.cruddata = {};
+    },
+    drag: function drag(ev, id) {
+      // console.log('id',ev.target.id);
+      // console.log(ev.target.id);
+      this.editid = id;
+      ev.dataTransfer.setData("Text", ev.target.id);
+    },
+    drop: function drop(ev) {
+      //var data = ev.dataTransfer.getData("Text");
+      console.log(ev.target.id);
+      this.cruddata.column = ev.target.id;
+      this.update(); // ev.target.appendChild(document.getElementById(data));
+
+      ev.preventDefault();
     }
   },
   mounted: function mounted() {
@@ -6621,7 +6635,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n#kolko[data-v-6fea1581] {\n    border-radius:5px;\n    width:10px;\n    height:10px;\n    border:1px #999 solid;\n    position:absolute;\n    left:20px;\n    bottom:20px;\n}\n#kolko[data-v-6fea1581]:hover{\n      background:red\n}\ntd[data-v-6fea1581]{\nborder:1px black solid\n}\n", ""]);
+exports.push([module.i, "\n#kolko[data-v-6fea1581] {\r\n    border-radius: 5px;\r\n    width: 10px;\r\n    height: 10px;\r\n    border: 1px #999 solid;\r\n    position: absolute;\r\n    left: 20px;\r\n    bottom: 20px;\n}\n#kolko[data-v-6fea1581]:hover {\r\n    background: red\n}\ntd[data-v-6fea1581] {\r\n    /* border: 1px black solid; */\r\n    padding: 0px 200px 0px 0px;\n}\n#div1[data-v-6fea1581] {\r\n  width: 350px;\r\n  height: 70px;\r\n  padding: 10px;\r\n  border: 1px solid #aaaaaa;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -38095,226 +38109,308 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _vm.modelname.length > 0
-      ? _c(
-          "div",
-          [
-            _vm._m(0),
-            _vm._v(" "),
-            _vm._l(
-              _vm.dane.filter(function(el) {
-                return el.column == 1
-              }),
-              function(elem) {
-                return _c("div", { attrs: { draggable: "true" } }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: elem.status,
-                        expression: "elem.status"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(elem.status)
-                        ? _vm._i(elem.status, null) > -1
-                        : elem.status
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.done(elem.id)
-                      },
-                      change: function($event) {
-                        var $$a = elem.status,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 &&
-                              _vm.$set(elem, "status", $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              _vm.$set(
-                                elem,
-                                "status",
-                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                              )
-                          }
-                        } else {
-                          _vm.$set(elem, "status", $$c)
-                        }
-                      }
+      ? _c("div", [
+          _c("div", {
+            attrs: { id: "div1", ondragover: "allowDrop(event)" },
+            on: {
+              drop: function($event) {
+                return _vm.drop($event)
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("table", [
+            _c("tr", [
+              _c(
+                "td",
+                {
+                  attrs: { id: "1", ondragover: "allowDrop(event)" },
+                  on: {
+                    drop: function($event) {
+                      return _vm.drop($event)
                     }
+                  }
+                },
+                _vm._l(
+                  _vm.dane.filter(function(el) {
+                    return el.column == 1
                   }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "" } }, [
-                    _vm._v(_vm._s(elem.title))
-                  ]),
-                  _vm._v(" "),
-                  _vm.destroyMode
-                    ? _c(
-                        "button",
-                        {
+                  function(elem) {
+                    return _c(
+                      "div",
+                      {
+                        attrs: { draggable: "true" },
+                        on: {
+                          dragstart: function($event) {
+                            return _vm.drag($event, elem.id)
+                          }
+                        }
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: elem.status,
+                              expression: "elem.status"
+                            }
+                          ],
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(elem.status)
+                              ? _vm._i(elem.status, null) > -1
+                              : elem.status
+                          },
                           on: {
                             click: function($event) {
-                              return _vm.mydestroy(elem.id)
+                              return _vm.done(elem.id)
+                            },
+                            change: function($event) {
+                              var $$a = elem.status,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(elem, "status", $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      elem,
+                                      "status",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(elem, "status", $$c)
+                              }
                             }
                           }
-                        },
-                        [_vm._v("Usuń")]
-                      )
-                    : _vm._e()
-                ])
-              }
-            ),
-            _vm._v(" "),
-            _vm._l(
-              _vm.dane.filter(function(el) {
-                return el.column == 2
-              }),
-              function(elem) {
-                return _c("div", { attrs: { draggable: "true" } }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: elem.status,
-                        expression: "elem.status"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(elem.status)
-                        ? _vm._i(elem.status, null) > -1
-                        : elem.status
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.done(elem.id)
-                      },
-                      change: function($event) {
-                        var $$a = elem.status,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 &&
-                              _vm.$set(elem, "status", $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              _vm.$set(
-                                elem,
-                                "status",
-                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                              )
-                          }
-                        } else {
-                          _vm.$set(elem, "status", $$c)
-                        }
-                      }
+                        }),
+                        _vm._v(" "),
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v(_vm._s(elem.title))
+                        ]),
+                        _vm._v(" "),
+                        _vm.destroyMode
+                          ? _c(
+                              "button",
+                              {
+                                on: {
+                                  click: function($event) {
+                                    return _vm.mydestroy(elem.id)
+                                  }
+                                }
+                              },
+                              [_vm._v("Usuń")]
+                            )
+                          : _vm._e()
+                      ]
+                    )
+                  }
+                ),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "td",
+                {
+                  attrs: { id: "2", ondragover: "allowDrop(event)" },
+                  on: {
+                    drop: function($event) {
+                      return _vm.drop($event)
                     }
+                  }
+                },
+                _vm._l(
+                  _vm.dane.filter(function(el) {
+                    return el.column == 2
                   }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "" } }, [
-                    _vm._v(_vm._s(elem.title))
-                  ]),
-                  _vm._v(" "),
-                  _vm.destroyMode
-                    ? _c(
-                        "button",
-                        {
+                  function(elem) {
+                    return _c(
+                      "div",
+                      {
+                        attrs: { draggable: "true" },
+                        on: {
+                          dragstart: function($event) {
+                            return _vm.drag($event, elem.id)
+                          }
+                        }
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: elem.status,
+                              expression: "elem.status"
+                            }
+                          ],
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(elem.status)
+                              ? _vm._i(elem.status, null) > -1
+                              : elem.status
+                          },
                           on: {
                             click: function($event) {
-                              return _vm.mydestroy(elem.id)
+                              return _vm.done(elem.id)
+                            },
+                            change: function($event) {
+                              var $$a = elem.status,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(elem, "status", $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      elem,
+                                      "status",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(elem, "status", $$c)
+                              }
                             }
                           }
-                        },
-                        [_vm._v("Usuń")]
-                      )
-                    : _vm._e()
-                ])
-              }
-            ),
-            _vm._v(" "),
-            _vm._l(
-              _vm.dane.filter(function(el) {
-                return el.column == 3
-              }),
-              function(elem) {
-                return _c("div", { attrs: { draggable: "true" } }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: elem.status,
-                        expression: "elem.status"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(elem.status)
-                        ? _vm._i(elem.status, null) > -1
-                        : elem.status
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.done(elem.id)
-                      },
-                      change: function($event) {
-                        var $$a = elem.status,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 &&
-                              _vm.$set(elem, "status", $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              _vm.$set(
-                                elem,
-                                "status",
-                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                              )
-                          }
-                        } else {
-                          _vm.$set(elem, "status", $$c)
-                        }
-                      }
+                        }),
+                        _vm._v(" "),
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v(_vm._s(elem.title))
+                        ]),
+                        _vm._v(" "),
+                        _vm.destroyMode
+                          ? _c(
+                              "button",
+                              {
+                                on: {
+                                  click: function($event) {
+                                    return _vm.mydestroy(elem.id)
+                                  }
+                                }
+                              },
+                              [_vm._v("Usuń")]
+                            )
+                          : _vm._e()
+                      ]
+                    )
+                  }
+                ),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "td",
+                {
+                  attrs: { id: "3", ondragover: "allowDrop(event)" },
+                  on: {
+                    drop: function($event) {
+                      return _vm.drop($event)
                     }
+                  }
+                },
+                _vm._l(
+                  _vm.dane.filter(function(el) {
+                    return el.column == 3
                   }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "" } }, [
-                    _vm._v(_vm._s(elem.title))
-                  ]),
-                  _vm._v(" "),
-                  _vm.destroyMode
-                    ? _c(
-                        "button",
-                        {
+                  function(elem) {
+                    return _c(
+                      "div",
+                      {
+                        attrs: { draggable: "true" },
+                        on: {
+                          dragstart: function($event) {
+                            return _vm.drag($event, elem.id)
+                          }
+                        }
+                      },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: elem.status,
+                              expression: "elem.status"
+                            }
+                          ],
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(elem.status)
+                              ? _vm._i(elem.status, null) > -1
+                              : elem.status
+                          },
                           on: {
                             click: function($event) {
-                              return _vm.mydestroy(elem.id)
+                              return _vm.done(elem.id)
+                            },
+                            change: function($event) {
+                              var $$a = elem.status,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(elem, "status", $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      elem,
+                                      "status",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(elem, "status", $$c)
+                              }
                             }
                           }
-                        },
-                        [_vm._v("Usuń")]
-                      )
-                    : _vm._e()
-                ])
-              }
-            )
-          ],
-          2
-        )
+                        }),
+                        _vm._v(" "),
+                        _c("label", { attrs: { for: "" } }, [
+                          _vm._v(_vm._s(elem.title))
+                        ]),
+                        _vm._v(" "),
+                        _vm.destroyMode
+                          ? _c(
+                              "button",
+                              {
+                                on: {
+                                  click: function($event) {
+                                    return _vm.mydestroy(elem.id)
+                                  }
+                                }
+                              },
+                              [_vm._v("Usuń")]
+                            )
+                          : _vm._e()
+                      ]
+                    )
+                  }
+                ),
+                0
+              )
+            ])
+          ])
+        ])
       : _c("div", [_vm._v("Zapodaj nazwę modelu by użyć komponentu Read")]),
     _vm._v(" "),
     _c("div", { attrs: { id: "edit" } }, [
@@ -38324,53 +38420,49 @@ var render = function() {
           : _c("p", [_c("b", [_vm._v("Stwórz nowy rekord")])]),
         _vm._v(" "),
         _c("div", [
-          _c(
-            "div",
-            { staticClass: "form-group", attrs: { draggable: "true" } },
-            [
-              _c("label", [_vm._v("Todo:")]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.cruddata.title,
-                    expression: "cruddata.title"
-                  }
-                ],
-                domProps: { value: _vm.cruddata.title },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.cruddata, "title", $event.target.value)
-                  }
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", [_vm._v("Todo:")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.cruddata.title,
+                  expression: "cruddata.title"
                 }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.cruddata.column,
-                    expression: "cruddata.column"
+              ],
+              domProps: { value: _vm.cruddata.title },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
                   }
-                ],
-                domProps: { value: _vm.cruddata.column },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.cruddata, "column", $event.target.value)
-                  }
+                  _vm.$set(_vm.cruddata, "title", $event.target.value)
                 }
-              })
-            ]
-          ),
+              }
+            }),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.cruddata.column,
+                  expression: "cruddata.column"
+                }
+              ],
+              domProps: { value: _vm.cruddata.column },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.cruddata, "column", $event.target.value)
+                }
+              }
+            })
+          ]),
           _vm._v(" "),
           _vm.mode == "create"
             ? _c(
@@ -38409,22 +38501,7 @@ var render = function() {
     })
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("table", [
-      _c("tr", [
-        _c("td", [_vm._v("fsdaffsdfsda")]),
-        _vm._v(" "),
-        _c("td", [_vm._v("fasfasdsffdsdf")]),
-        _vm._v(" "),
-        _c("td", [_vm._v("fsdafdsdff")])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -50620,6 +50697,14 @@ Vue.component('read', __webpack_require__(/*! ./components/Read.vue */ "./resour
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+
+window.allowDrop = function (ev) {
+  ev.preventDefault();
+};
+
+window.drop = function (ev) {
+  return ev.target.id;
+};
 
 var app = new Vue({
   el: '#app',
