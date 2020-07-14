@@ -1,12 +1,33 @@
 <template>
   <div>
     <div v-if="modelname.length > 0">
+
+      <table >
+        <tr>
+          <td>fsdaffsdfsda</td>
+          <td>fasfasdsffdsdf</td>
+          <td>fsdafdsdff</td>
+        </tr>
+      </table>
+      
    
-      <div v-for="elem in dane">
+      <div v-for="elem in dane.filter((el)=>el.column==1)"  draggable="true" >
           <input type="checkbox"  v-model="elem.status" @click="done(elem.id)"> 
           <label for="">{{elem.title}}</label>
           <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
-      </div>    
+      </div>   
+
+         <div v-for="elem in dane.filter((el)=>el.column==2)"  draggable="true" >
+          <input type="checkbox"  v-model="elem.status" @click="done(elem.id)"> 
+          <label for="">{{elem.title}}</label>
+          <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
+      </div>   
+
+         <div v-for="elem in dane.filter((el)=>el.column==3)"  draggable="true" >
+          <input type="checkbox"  v-model="elem.status" @click="done(elem.id)"> 
+          <label for="">{{elem.title}}</label>
+          <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
+      </div>  
     </div>
     <div v-else>Zapodaj nazwę modelu by użyć komponentu Read</div>
 
@@ -24,9 +45,11 @@
 
           <!-- TU WSTAW HTML -->
 
-          <div class="form-group">
+          <div class="form-group" draggable="true">
             <label>Todo:</label>
             <input v-model="cruddata.title" >
+            <input v-model="cruddata.column" >
+            
           </div>
           <!-- <div class="form-group">
             <label>description</label>
@@ -58,7 +81,7 @@ export default {
       hidden: ["created_at", "updated_at", "category_id"],
       mode: "create",
       editid: null,
-      cruddata: {},
+      cruddata: {column:2},
       destroyMode:false
     };
   },
@@ -152,17 +175,20 @@ export default {
 <style scoped>
 
  #kolko {
-                border-radius:5px;
-                width:10px;
-                height:10px;
-                border:1px #999 solid;
-                position:absolute;
-                left:20px;
-                bottom:20px;
-            }
+    border-radius:5px;
+    width:10px;
+    height:10px;
+    border:1px #999 solid;
+    position:absolute;
+    left:20px;
+    bottom:20px;
+}
 
-            #kolko:hover{
-                background:red
-            }
+  #kolko:hover{
+      background:red
+  }
   
+  td{
+border:1px black solid
+  }
 </style>
