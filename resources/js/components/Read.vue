@@ -1,28 +1,31 @@
 <template>
 <div>
     <div v-if="modelname.length > 0">
-<div id="div1" ondragover="allowDrop(event)" v-on:drop="drop($event)"></div>
         <table>
             <tr>
                 <td id="1" v-on:drop="drop($event)" ondragover="allowDrop(event)">
-                    <div v-for="elem in dane.filter((el)=>el.column==1)" draggable="true" v-on:dragstart="drag($event,elem.id)"  >
+                    <div v-for="elem in daneFilter.filter((el)=>el.column==1)" draggable="true" v-on:dragstart="drag($event,elem.id)"  >
                         <input type="checkbox" v-model="elem.status" @click="done(elem.id)">
                         <label for="">{{elem.title}}</label>
                         <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
+                        <button @click="hide(elem.id)" v-if="destroyMode">Archiwizuj</button>
                     </div>
                 </td>
                 <td id="2"  v-on:drop="drop($event)"  ondragover="allowDrop(event)">
-                    <div v-for="elem in dane.filter((el)=>el.column==2)" draggable="true" v-on:dragstart="drag($event,elem.id)">
+                    <div v-for="elem in daneFilter.filter((el)=>el.column==2)" draggable="true" v-on:dragstart="drag($event,elem.id)">
                         <input type="checkbox" v-model="elem.status" @click="done(elem.id)">
                         <label for="">{{elem.title}}</label>
                         <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
+                        <button @click="hide(elem.id)" v-if="destroyMode">Archiwizuj</button>
+
                     </div>
                 </td>
                 <td id="3"  v-on:drop="drop($event)"  ondragover="allowDrop(event)">
-                    <div v-for="elem in dane.filter((el)=>el.column==3)" draggable="true" v-on:dragstart="drag($event,elem.id)">
+                    <div v-for="elem in daneFilter.filter((el)=>el.column==3)" draggable="true" v-on:dragstart="drag($event,elem.id)">
                         <input type="checkbox" v-model="elem.status" @click="done(elem.id)">
                         <label for="">{{elem.title}}</label>
                         <button @click="mydestroy(elem.id)" v-if="destroyMode">Usuń</button>
+                        <button @click="hide(elem.id)" v-if="destroyMode">Archiwizuj</button>
                     </div>
                 </td>
             </tr>
@@ -104,6 +107,16 @@ export default {
                 .delete("/" + self.modelname.toLowerCase() + "/" + id)
                 .then(res => self.getData());
         },
+        async hide(id){
+            let self = this;
+            let one = self.dane.find((el) => el.id == id);
+            one.visible = !one.visible;
+          
+
+              await axios.patch("/" + self.modelname.toLowerCase() + "/" + id, {
+                    visible: one.visible
+            })
+        },
         edit(id) {
             this.editid = id;
             this.mode = "edit";
@@ -111,24 +124,12 @@ export default {
             freshobject = Object.create(this.dane.find(el => el.id == id));
             this.cruddata = freshobject;
         },
-        done(id) {
+        async done(id) {
             let self = this;
-            setTimeout(function () {
-                let one = self.dane.find((el) => el.id == id);
-                console.log(one);
-
-                //this.cruddata.status = one.status;
-
-                console.log(one.status);
-
-                axios.patch("/" + self.modelname.toLowerCase() + "/" + id, {
-                    status: one.status
-                })
-
-            }, 1000)
-
-            // this.cruddata 
-
+            let one = self.dane.find((el) => el.id == id);
+            await axios.patch("/" + self.modelname.toLowerCase() + "/" + id, {
+                status: one.status
+            })
         },
         update() {
             let self = this;
@@ -184,6 +185,9 @@ export default {
             } else {
                 return [];
             }
+        },
+        daneFilter(){
+            return this.dane.filter((el)=>el.visible == 1)
         }
     }
 };
